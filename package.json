@@ -10,12 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "jetifier": "^1.6.6",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "^1.8.0",
     "react-native-router-flux": "^4.2.0",
-    "react-native-screens": "^2.7.0",
+    "react-native-screens": "^2.9.0",
+    "react-native-text": "^1.0.8",
     "react-native-vector-icons": "^6.6.0"
   },
   "devDependencies": {
