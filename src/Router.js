@@ -19,13 +19,20 @@ import Fourth from './screens/Fourth';
 import Five from './screens/Five';
 import Six from './screens/Six';
 import Seven from './screens/Seven';
-
+import Seed from './screens/Seed';
+import Home from './screens/Home';
+import SignInUp from './screens/SignInUp';
+import GenerateWallet from './screens/GenerateWallet'
 const Root = () => {
 
     return (
         <View style={styles.container}>
             <Router >
                 <Stack key="root" hideNavBar>
+                    <Scene key="Home" component={Home}/>
+                    <Scene key="SignInUp" component={SignInUp}/>
+                    <Scene key="GenerateWallet" component={GenerateWallet}/>                    
+                    <Scene key="Seed" component={Seed}/>                    
                     <Scene key="First" component={First}/>
                     <Scene key="Second" component={Second}/>
                     <Scene key="Third" component={Third}/>

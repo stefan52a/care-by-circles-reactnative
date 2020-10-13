@@ -7,30 +7,23 @@ AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window")
 var extHeight = (screenHeight-650)/15
-import Mnemonic from '../libs/mnemonic'
-import bitcore from 'bitcore-lib-react-native'
-const First = (props) => {
-    const {passphrase} = props        
-    const wallet = Mnemonic.fromWords(passphrase.trim().split(" ")).toHex();
-    const network = bitcore.Networks['mainnet'];
-    const s = bitcore.HDPrivateKey.fromSeed(wallet, network);
-    const d = s.derive("m/0'/0/0"+0);
-    const address = bitcore.Address(d.publicKey, network).toString();
+
+const Home = () => {
     return (
         <View style={styles.container}>
             <Image source={myCenterImage} style={styles.image} />
-            <Text style={styles.title}>Your address</Text>
-            <Text style={styles.normalText}>{address}</Text>
+            <Text style={styles.title}>Circle</Text>
+            <Text style={styles.normalText}>Social Corona Tracking</Text>
             <View style={styles.bottom}>
-                <TouchableOpacity onPress={() => Actions.Second()} style={styles.icon}>
+                <TouchableOpacity onPress={() => Actions.SignInUp()} style={styles.icon}>
                     <AntDesign name="caretright" size={40+extHeight} color="white" />
                 </TouchableOpacity>
             </View>
-        </View>
+        </View> 
     )
 }
 
-export default First;
+export default Home;
 
 const styles = StyleSheet.create({
     container: {
