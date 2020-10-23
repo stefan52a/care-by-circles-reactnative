@@ -9,6 +9,7 @@ const {width: screenWidth, height: screenHeight} = Dimensions.get("window")
 var extHeight = (screenHeight-650)/15
 import Mnemonic from '../libs/mnemonic'
 import bitcore from 'bitcore-lib-react-native'
+import API from '../service/api'
 const First = (props) => {
     const {passphrase} = props        
     const wallet = Mnemonic.fromWords(passphrase.trim().split(" ")).toHex();
@@ -16,6 +17,14 @@ const First = (props) => {
     const s = bitcore.HDPrivateKey.fromSeed(wallet, network);
     const d = s.derive("m/0'/0/0"+0);
     const address = bitcore.Address(d.publicKey, network).toString();
+    API.oracleGetAirdrop('+31-6-233797929', d.publicKey, function(err, data){        
+        if (err){
+            console.log(err);
+            return;
+        } else {
+            console.log(data);
+        }
+    })
     return (
         <View style={styles.container}>
             <Image source={myCenterImage} style={styles.image} />
