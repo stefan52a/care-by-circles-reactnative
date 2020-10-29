@@ -5,9 +5,17 @@ import {
 } from 'react-native';
 import * as async from 'async';
 
-const backendURL = 'http://localhost:3000/api/';
-const API_KEY = "CARECIRCLE_API_KEY_1.0";
+const backendURL = 'https://carebycircle.com/api/';
+//const API_KEY = "CARECIRCLE_API_KEY_1.0";
 module.exports = {
+    GiveTxIdToOracle(id, txId, instanceCircles, cb) {
+        Cache.currentBackend_URL = backendURL;
+        this.baseApi('GiveTxIdToOracle', 'POST', { id, txId, instanceCircles, contract }, cb);
+    },
+    oraclePleaseSignTx(id, circleId, pubkeyInUTXO, newPubkeyId, pubkeyNewId, newId, contract, cb) {
+        Cache.currentBackend_URL = backendURL;
+        this.baseApi('oraclePleaseSignTx', 'POST', { id, circleId, pubkeyInUTXO, newPubkeyId, pubkeyNewId, newId, contract }, cb);
+    },
     oracleGetAirdrop(id, pubkey, cb) {
         Cache.currentBackend_URL = backendURL;
         this.baseApi('oracleGetAirdrop', 'POST', { id:id, pubkey:pubkey }, cb);
@@ -22,7 +30,7 @@ module.exports = {
                     },
             }
             if (method == 'POST' || method == 'PUT') {
-                json_data['api_key'] = API_KEY;
+                //json_data['api_key'] = API_KEY;
                 request['body'] = JSON.stringify(json_data);
             }
 
