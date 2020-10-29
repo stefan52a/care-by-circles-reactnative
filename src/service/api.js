@@ -4,6 +4,7 @@ import {
     Alert
 } from 'react-native';
 import * as async from 'async';
+import Cache from '../utils/cache'
 
 const backendURL = 'https://carebycircle.com/api/';
 //const API_KEY = "CARECIRCLE_API_KEY_1.0";
