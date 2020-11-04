@@ -36,7 +36,7 @@ const GenerateWallet = (props) => {
                 <TextInput style={styles.textInput} value={pin} onChangeText={text => setPin(text)} secureTextEntry={true} placeholder="ENTER PIN" keyboardType='numeric' />
                 {option === 'create' && <TextInput style={styles.textInput} value={confirm_pin} onChangeText={text => setConfirmPin(text)} secureTextEntry={true} placeholder="CONFIRM PIN" keyboardType='numeric' />}
                 
-                <TouchableOpacity onPress={() => {}} style={styles.button}>
+                <TouchableOpacity onPress={() => {Actions.Nav()}} style={styles.button}>
                     <Text style={styles.title}>{option === 'create' ? 'Generate' : 'Login'}</Text>
                 </TouchableOpacity>
             </View>

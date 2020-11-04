@@ -81,6 +81,8 @@ target 'corona' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
+  pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
+
   target 'coronaTests' do
     inherit! :complete
     # Pods for testing

@@ -23,18 +23,23 @@ import Seed from './screens/Seed';
 import Home from './screens/Home';
 import SignInUp from './screens/SignInUp';
 import GenerateWallet from './screens/GenerateWallet'
+import Main from './screens/Main';
+import AppNavigator from './AppNavigator';
+
 const Root = () => {
 
     return (
         <View style={styles.container}>
             <Router >
                 <Stack key="root" hideNavBar>
-                    <Scene key="Home" component={Home}/>
-                    <Scene key="SignInUp" component={SignInUp}/>
+                    <Scene key="Nav" component={AppNavigator} />
+                    <Scene key="Main" component={Main} />
+                    <Scene key="Home" component={Home} initial={true}/>
+                    <Scene key="SignInUp" component={SignInUp} />
                     <Scene key="GenerateWallet" component={GenerateWallet}/>                    
-                    <Scene key="Seed" component={Seed}/>                    
-                    <Scene key="First" component={First}/>
-                    <Scene key="Second" component={Second}/>
+                    <Scene key="Seed" component={Seed} />                    
+                    <Scene key="First" component={First} />
+                    <Scene key="Second" component={Second} />
                     <Scene key="Third" component={Third}/>
                     <Scene key="Fourth" component={Fourth}/>
                     <Scene key="Five" component={Five}/>
