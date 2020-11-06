@@ -19,7 +19,7 @@ module.exports = {
     },
     oracleGetAirdrop(id, pubkey, cb) {
         Cache.currentBackend_URL = backendURL;
-        this.baseApi('oracleGetAirdrop', 'POST', { id:id, pubkey:pubkey }, cb);
+        this.baseApi('oracleGetAirdrop', 'POST', { AliceId:id, AlicePubkey:pubkey }, cb);
     },
     async baseApi(sub_url, method, json_data, cb) {
         try {

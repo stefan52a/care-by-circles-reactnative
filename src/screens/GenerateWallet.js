@@ -5,22 +5,73 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { Actions } from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient'
 import images from '../config/images';
-
+import bip39 from 'react-native-bip39'
+import CryptoJS, { enc } from "react-native-crypto-js";
+import {WriteLocalWalletFile, ReadLocalWalletFile, getPublicKey} from '../libs/utils'
+import Cache from '../utils/cache'
+import API from '../service/api'
 AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
 var extHeight = (screenHeight - 650) / 15
+
 const GenerateWallet = (props) => {
     const option = props.option;
     const [pin, setPin] = useState("");
     const [confirm_pin, setConfirmPin] = useState("");
 
-    const clickNext = () => {
-        if (pin !== confirm_pin) {
-            alert('pin is not match.');
-            return;
-        }
-        Actions.Seed({ pin: pin });
+    const clickNext = async () => {
+        if (option === "create"){
+            if (pin !== confirm_pin) {
+                alert('pin is not match.');
+                return;
+            }            
+            
+            const passphrase = await bip39.generateMnemonic(); 
+            console.log('passphrase', passphrase);
+            //const wallet = bip39.mnemonicToEntropy(passphrase);
+            var seed = await bip39.mnemonicToSeedHex(passphrase)         
+            const data = {
+                wallet: seed
+            }
+            console.log(JSON.stringify(data));
+            var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), pin).toString();
+            WriteLocalWalletFile(encrypted, function(err, data){
+                console.log(err, data);
+                Cache.wallet = seed;
+                const publickey = getPublicKey(seed);
+                console.log(publickey);
+                const phonenumber =  '+31-6-233787929'  // get phone number;
+                API.oracleGetAirdrop(phonenumber, publickey, function (error, response){                    
+                    console.log('-------  oracleGetAirdrop ------------');                    
+                    console.log(error, response);
+                })
+                //Actions.Nav({ pin: pin });
+            })
+        } else {
+            ReadLocalWalletFile(function(err, data){
+                console.log(err, data);
+                if (err == null){
+                    var decrypted = CryptoJS.AES.decrypt(data, pin).toString(CryptoJS.enc.Utf8);                    
+                    decrypted_json = JSON.parse(decrypted);       
+                    Cache.wallet = decrypted_json.wallet;
+                    console.log(decrypted_json);                    
+                    Actions.Nav({ pin: pin });                              
+                } else {
+                    alert('incorrect pin! if you are first, please sign up first!');
+                    return;
+                }                
+            })
+        }               
+        // const s = bitcore.HDPrivateKey.fromSeed(seed, "regtest");
+        // console.log(s);
+        // const d = s.derive("m/0'/0/0");
+        // const publickey = d.publicKey;
+
+        // console.log('publickey', publickey.toString('hex'));        
+        // const address = bitcore.Address(publickey, "regtest").toString();
+        // console.log('address', address);
+        //
     }
 
     return (
@@ -36,7 +87,7 @@ const GenerateWallet = (props) => {
                 <TextInput style={styles.textInput} value={pin} onChangeText={text => setPin(text)} secureTextEntry={true} placeholder="ENTER PIN" keyboardType='numeric' />
                 {option === 'create' && <TextInput style={styles.textInput} value={confirm_pin} onChangeText={text => setConfirmPin(text)} secureTextEntry={true} placeholder="CONFIRM PIN" keyboardType='numeric' />}
                 
-                <TouchableOpacity onPress={() => {Actions.Nav()}} style={styles.button}>
+                <TouchableOpacity onPress={() => clickNext()} style={styles.button}>
                     <Text style={styles.title}>{option === 'create' ? 'Generate' : 'Login'}</Text>
                 </TouchableOpacity>
             </View>

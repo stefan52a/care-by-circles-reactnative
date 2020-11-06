@@ -34,8 +34,8 @@ const Root = () => {
                 <Stack key="root" hideNavBar>
                     <Scene key="Nav" component={AppNavigator} />
                     <Scene key="Main" component={Main} />
-                    <Scene key="Home" component={Home} initial={true}/>
-                    <Scene key="SignInUp" component={SignInUp} />
+                    <Scene key="Home" component={Home}/>
+                    <Scene key="SignInUp" component={SignInUp} initial={true}/>
                     <Scene key="GenerateWallet" component={GenerateWallet}/>                    
                     <Scene key="Seed" component={Seed} />                    
                     <Scene key="First" component={First} />
