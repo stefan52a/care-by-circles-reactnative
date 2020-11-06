@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TextInput, PermissionsAndroid } from 'react-native'
+import { View, Text, Image, StyleSheet, Dimensions, TextInput, PermissionsAndroid, Modal, ScrollView, TouchableOpacity } from 'react-native'
 import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Contacts from 'react-native-contacts';
-import { ScrollView } from 'react-native-gesture-handler';
-import Cache from '../utils/cache'
+import Cache from '../utils/cache';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
+
 const { width } = Dimensions.get('window');
 
 const Contact = () => {
 
     const [users, setUsers] = useState([]);
+    const [modal, setModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState();
+
     useEffect(() => {
+        console.log('*******************')
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
             {
@@ -21,11 +27,11 @@ const Contact = () => {
             }
         )
             .then(Contacts.getAll().then(contacts => {
-                console.log(contacts);
+                // console.log(contacts);
                 setUsers(contacts);
             }))
-    });
-    console.log('cache', Cache.data);
+    }, [Contacts, PermissionsAndroid]);
+    // console.log('cache', Cache.data);
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}
@@ -33,6 +39,7 @@ const Contact = () => {
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
+
             <View style={{ position: 'relative' }}>
                 <TextInput style={styles.input} placeholder={'Search'} />
                 <AntDesign name="search1" size={21} color="grey" style={styles.icon} />
@@ -46,17 +53,75 @@ const Contact = () => {
                                     <Image source={item.thumbnailPath === '' ? images.user : { uri: item.thumbnailPath }} style={styles.image} />
                                 </View>
                                 <Text numberOfLines={1} style={{ textAlign: 'center', color: '#fff', marginTop: 3 }}>{item.displayName}</Text>
-                                <View style={styles.btn}>
+                                <TouchableOpacity style={styles.btn} onPress={()=>{setSelectedUser(item); setModal(true)}}>
                                     <Text style={{ color: 'grey' }}>Add</Text>
-                                </View>
+                                </TouchableOpacity>
                             </View>)
                     }
                 </View>
 
             </ScrollView>
             <View style={{ height: 76 }} />
+            {modal && <ConfirmModal user={selectedUser} onClose={()=>{ setModal(false);setSelectedUser(null)}} />}
 
         </LinearGradient>
+    )
+}
+
+
+function ConfirmModal(props) {
+    const { user, onClose } = props;
+    return (
+        <Modal
+            transparent
+            onRequestClose={() => { }}
+            visible={true}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <View style={styles.modalHeader}>
+                        <Text style={{ color: '#fff'}}>Confirm</Text>
+                    </View>
+                    <View style={{ flex: 1, marginTop: 12, width: '90%'}}>
+                        <View style={{ flexDirection: 'row', marginTop: 8}}>
+                            <View style={{ flex: 1}}>
+                                <Text>Name:</Text>
+                            </View>
+                            <View style={{ flex: 3}}>
+                                <Text>{user?.displayName}</Text>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginTop: 8}}>
+                            <View style={{ flex: 1}}>
+                                <Text>Phone:</Text>
+                            </View>
+                            <View style={{ flex: 3}}>
+                                <Text>{user?.phoneNumbers[0]?.number}</Text>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginTop: 8, alignItems: 'center'}}>
+                            <View style={{ flex: 1}}>
+                                <Text>PubKey:</Text>
+                            </View>
+                            <View style={{ flex: 3, flexDirection: 'row', alignItems: 'center'}}>
+                                <TextInput style={styles.modalInput} placeholder={'Search'} />
+                                <TouchableOpacity onPress={() => {}} style={styles.scanBtn}>
+                                    <Text style={styles.buttonText}>Scan</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={() => { Actions.Seven(); onClose(false); }} style={styles.button}>
+                            <Text style={styles.buttonText}>Confirm</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => onClose(false)} style={[styles.button, { backgroundColor: '#DD4F43'}]}>
+                            <Text style={styles.buttonText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
     )
 }
 
@@ -67,6 +132,33 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0,0.5)",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    modalContent: {
+        width: width-50,
+        height: 200,
+        borderRadius: 12,
+        shadowColor: "black",
+        alignItems: "center",
+        // justifyContent: "center",
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 3,
+        backgroundColor: "#fff"
+    },
+    modalHeader: {
+        borderTopEndRadius: 12,
+        borderTopLeftRadius: 12,
+        width: '100%',
+        height: 30,
+        backgroundColor: '#925841',
+        alignItems: "center",
+        justifyContent: "center"
     },
     main: {
         margin: 7,
@@ -79,7 +171,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: width / 3.8,
         height: width / 3.8,
-        // backgroundColor: '#fff',
         borderRadius: width / 8
     },
     contact: {
@@ -105,7 +196,7 @@ const styles = StyleSheet.create({
     image: {
         width: width / 3.8,
         height: width / 3.8,
-        borderRadius: width/7.6,
+        borderRadius: width / 7.6,
         resizeMode: 'contain',
     },
     btn: {
@@ -124,5 +215,41 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 16,
         bottom: 20
+    },
+    buttonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 12
+    },
+    button: {
+        backgroundColor: '#00B5EE',
+        height: 25,
+        width: 100,
+        borderRadius: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 12
+    },
+    buttonText: {
+        color: '#fff'
+    },
+    modalInput: {
+        width: '60%',
+        borderWidth: 1,
+        borderColor: 'grey',
+        height: 30,
+        padding: 0,
+        paddingHorizontal: 7
+    },
+    scanBtn: {
+        backgroundColor: '#CC7832',
+        height: 30,
+        width: 50,
+        borderRadius: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 8
+        // marginTop: 12
     }
 })
