@@ -1,4 +1,8 @@
 rootProject.name = 'corona'
+include ':react-native-device-info'
+project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
+include ':react-native-sim-data'
+project(':react-native-sim-data').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sim-data/android')
 include ':react-native-contacts'
 project(':react-native-contacts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-contacts/android')
 include ':react-native-fs'

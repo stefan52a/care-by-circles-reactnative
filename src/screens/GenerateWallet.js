@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -10,6 +10,9 @@ import CryptoJS, { enc } from "react-native-crypto-js";
 import {WriteLocalWalletFile, ReadLocalWalletFile, getPublicKey} from '../libs/utils'
 import Cache from '../utils/cache'
 import API from '../service/api'
+import RNSimData from 'react-native-sim-data'
+import { PermissionsAndroid } from 'react-native';
+
 AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
@@ -19,6 +22,34 @@ const GenerateWallet = (props) => {
     const option = props.option;
     const [pin, setPin] = useState("");
     const [confirm_pin, setConfirmPin] = useState("");
+    const [phonenumber, setPhoneNumber] = useState("");
+    const requestPhonePermission = async () => {
+        try {
+          const granted = await PermissionsAndroid.request( PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+            {
+              'title': 'READ_PHONE_STATE Permission',
+              'message': 'READ_PHONE_STATE needs access to your device ' +
+                    'so you can take device imei.'
+            }
+          )
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {            
+            const phonenumber =  RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
+            setPhoneNumber(phonenumber);            
+          } else {
+            Alert.alert("App permission denied!")
+          }
+        } catch (err) {
+          console.warn(err)
+        }
+    }
+
+    const chck = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
+    if (chck  === true) {        
+        const phonenumber =  RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
+        setPhoneNumber(phonenumber);
+    } else {
+      requestPhonePermission();
+    }
 
     const clickNext = async () => {
         if (option === "create"){
@@ -31,30 +62,42 @@ const GenerateWallet = (props) => {
             console.log('passphrase', passphrase);
             //const wallet = bip39.mnemonicToEntropy(passphrase);
             var seed = await bip39.mnemonicToSeedHex(passphrase)         
+            const publickey = getPublicKey(seed);       
             const data = {
-                wallet: seed
+                wallet: seed,
+                publickey: publickey
             }
             console.log(JSON.stringify(data));
-            var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), pin).toString();
-            WriteLocalWalletFile(encrypted, function(err, data){
-                console.log(err, data);
-                Cache.wallet = seed;
-                const publickey = getPublicKey(seed);
-                console.log(publickey);
-                const phonenumber =  '+31-6-233787929'  // get phone number;
-                API.oracleGetAirdrop(phonenumber, publickey, function (error, response){                    
-                    console.log('-------  oracleGetAirdrop ------------');                    
-                    console.log(error, response);
-                })
-                //Actions.Nav({ pin: pin });
+            let phone = phonenumber? phonenumber : RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
+            console.log(phone, publickey)
+            //phone = '+33-6-233787929'
+            API.oracleGetAirdrop(phone, publickey, function (error, response){                    
+                console.log('-------  oracleGetAirdrop ------------');                    
+                console.log(error, response);
+                if (error == null){
+                    data.contract = response.contract
+                    data.Circle = response.Circle
+                    data.psbt = response.psbt
+                    data.tokens = response.tokens
+                    var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), pin).toString();
+                    WriteLocalWalletFile(encrypted, function(err, data){
+                        console.log(err, data);
+                        Cache.data = data;                                 
+                        Actions.Nav({ pin: pin });
+                    })                    
+                } else {
+                    alert(`oracleGetAirdrop error: ${error.error}`)
+                }
             })
+
+
         } else {
             ReadLocalWalletFile(function(err, data){
                 console.log(err, data);
                 if (err == null){
                     var decrypted = CryptoJS.AES.decrypt(data, pin).toString(CryptoJS.enc.Utf8);                    
                     decrypted_json = JSON.parse(decrypted);       
-                    Cache.wallet = decrypted_json.wallet;
+                    Cache.data = decrypted_json;
                     console.log(decrypted_json);                    
                     Actions.Nav({ pin: pin });                              
                 } else {

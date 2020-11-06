@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Contacts from 'react-native-contacts';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import Cache from '../utils/cache'
 const { width } = Dimensions.get('window');
 
 const Contact = () => {
@@ -21,10 +21,11 @@ const Contact = () => {
             }
         )
             .then(Contacts.getAll().then(contacts => {
+                console.log(contacts);
                 setUsers(contacts);
             }))
     });
-
+    console.log('cache', Cache.data);
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}

@@ -83,6 +83,8 @@ target 'corona' do
 
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   target 'coronaTests' do
     inherit! :complete
     # Pods for testing

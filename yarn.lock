@@ -6601,6 +6601,11 @@ react-native-crypto@^2.0.1, react-native-crypto@^2.2.0:
     public-encrypt "^4.0.0"
     randomfill "^1.0.3"
 
+react-native-device-info@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-7.0.2.tgz#dcfebd8e879e2a1973156597eba4d6777e67945f"
+  integrity sha512-3jzEzzX0Zo5rm+fClPFp3OGUnRPjK0w4X6RCNZtuaNbwMG+Vm3BLcU69dv+UfkYMrCo5JSKV6lA2fG25qq2tuA==
+
 react-native-fs@^2.16.6:
   version "2.16.6"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.16.6.tgz#2901789a43210a35a0ef0a098019bbef3af395fd"
@@ -6698,6 +6703,11 @@ react-native-screens@^2.12.0:
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.12.0.tgz#579b7a6f99b3dd777ef4a447682e46f10ce9f5eb"
   integrity sha512-sJn7xrbVXYYQ1FBKp4eg3NXL7e2EpORT5xeQcXRJHCqt5ZcGduybZWE4tFbnBeaHE5YNab9owdrrDOJTBDKKFw==
+
+react-native-sim-data@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-sim-data/-/react-native-sim-data-3.0.0.tgz#edc8e3ebdf8d5ec131fa5d5da84d803c1493ab26"
+  integrity sha512-TE7AgLqu5HE1Gi6K08DV8L8920M7+A9vEufW4E8e0OWVg9fd92jPAKZdsXP/6ksMhmvH5yGbi0q/c2Gwq4udpw==
 
 react-native-tab-view@^2.15.2:
   version "2.15.2"

@@ -37,15 +37,15 @@ module.exports = {
 
             let response = await fetch(Cache.currentBackend_URL + sub_url, request);
             let responseJson = await response.json();
-
+            console.log('responseJson', responseJson);
             if (response.status == 200) {
-                if (responseJson.status == 'failed'){
-                  cb(responseJson.message, responseJson)
+                if (responseJson.error !== "none"){
+                  cb(responseJson.error, responseJson)
                 } else {
                   cb(null, responseJson);
                 }
             } else {
-                cb(responseJson.message);
+                cb(responseJson);
             }
         } catch (error) {
             cb(error)
