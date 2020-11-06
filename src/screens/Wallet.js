@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import QRCode from 'react-native-qrcode-svg';
 
 const { width } = Dimensions.get('window');
+const string = 'Circles are tribes with a maximum of 150 people.';
 
 const Wallet = () => {
     return (
@@ -12,7 +14,12 @@ const Wallet = () => {
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
-            <Text style={styles.normalText}>{'Wallet'}</Text>
+              <QRCode
+                size={180}
+                value={string}
+              />
+            <Text style={styles.normalText}>{string}</Text>
+
         </LinearGradient> 
     )
 }
@@ -23,22 +30,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: width / 4,
+        paddingHorizontal: 20
     },
     main: {
         justifyContent: 'center',
         alignItems: 'center'
     },
-    helpText: {
-        position: 'absolute',
-        fontSize: 18,
-        color: "white",
-        textAlign: 'center',
-    },
     normalText: {
-        fontSize: 15,
+        fontSize: 20,
         color: "white",
         textAlign: 'center',
+        marginTop: 20
     },
     image: {
         width: width + 10,
