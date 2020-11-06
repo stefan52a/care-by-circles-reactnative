@@ -15,9 +15,10 @@ const Contact = () => {
     const [users, setUsers] = useState([]);
     const [modal, setModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
+    const [scan, setScan] = useState(false);
+    const [pubkey, setPubkey] = useState();
 
     useEffect(() => {
-        console.log('*******************')
         PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
             {
@@ -32,8 +33,25 @@ const Contact = () => {
             }))
     }, [Contacts, PermissionsAndroid]);
     // console.log('cache', Cache.data);
-    return (
-        <LinearGradient
+
+    // onSuccess = e => {
+    //     console.log('+++++++++++++++', e);
+
+    //     // Linking.openURL(e.data).catch(err =>
+    //     //   console.error('An error occured', err)
+    //     // );
+    //   };
+
+    if(scan){
+        return(
+        <View style={{ flex: 1, marginTop: -50, backgroundColor: '#000'}}>
+            <QRCodeScanner
+            onRead={(e)=>{setPubkey(e.rawData); setScan(false); }}
+            flashMode={RNCamera.Constants.FlashMode.torch}
+        />
+        </View>)
+    } else {
+        return <LinearGradient
             colors={['#ED1C24', '#1B1464']}
             style={styles.container}
             start={{ x: 1, y: 0 }}
@@ -62,15 +80,14 @@ const Contact = () => {
 
             </ScrollView>
             <View style={{ height: 76 }} />
-            {modal && <ConfirmModal user={selectedUser} onClose={()=>{ setModal(false);setSelectedUser(null)}} />}
-
+            {modal && <ConfirmModal pubkey={pubkey} user={selectedUser} onClose={()=>{ setModal(false);setSelectedUser(null)}} onScan={()=>setScan(true)}/>}
         </LinearGradient>
-    )
+    }
 }
 
 
 function ConfirmModal(props) {
-    const { user, onClose } = props;
+    const { user, onClose, onScan, pubkey } = props;
     return (
         <Modal
             transparent
@@ -104,8 +121,8 @@ function ConfirmModal(props) {
                                 <Text>PubKey:</Text>
                             </View>
                             <View style={{ flex: 3, flexDirection: 'row', alignItems: 'center'}}>
-                                <TextInput style={styles.modalInput} placeholder={'Search'} />
-                                <TouchableOpacity onPress={() => {}} style={styles.scanBtn}>
+                                <TextInput style={styles.modalInput} placeholder={'Search'} value={pubkey}/>
+                                <TouchableOpacity onPress={()=>onScan()} style={styles.scanBtn}>
                                     <Text style={styles.buttonText}>Scan</Text>
                                 </TouchableOpacity>
                             </View>
