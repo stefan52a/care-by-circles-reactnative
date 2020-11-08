@@ -10,7 +10,7 @@ function getPublicKey(seed){
     return publickey.toString('hex')
 }
 
-async function ReadLocalWalletFile(callback){
+async function ReadDeviceStore(callback){
     var path = RNFS.DocumentDirectoryPath + '/carewallet.keystore';
     RNFS.readFile(path, 'utf8')
     .then((success) => {
@@ -23,7 +23,7 @@ async function ReadLocalWalletFile(callback){
     });
 }
 
-async function WriteLocalWalletFile(data, callback){
+async function UpdateDeviceStore(data, callback){
     var path = RNFS.DocumentDirectoryPath + '/carewallet.keystore';
     RNFS.writeFile(path, data, 'utf8')
     .then((success) => {
@@ -37,7 +37,7 @@ async function WriteLocalWalletFile(data, callback){
 }
 
 module.exports = {
-    ReadLocalWalletFile,
-    WriteLocalWalletFile,
+    ReadDeviceStore,
+    UpdateDeviceStore,
     getPublicKey
 }

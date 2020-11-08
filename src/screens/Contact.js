@@ -7,6 +7,9 @@ import Contacts from 'react-native-contacts';
 import Cache from '../utils/cache';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
+import bitcoin from 'react-native-bitcoinjs-lib';
+import bitcore from 'bitcore-lib-react-native';
+import {UpdateDeviceStore} from '../libs/utils'
 
 const { width } = Dimensions.get('window');
 
@@ -16,7 +19,8 @@ const Contact = () => {
     const [modal, setModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
     const [scan, setScan] = useState(false);
-    const [pubkey, setPubkey] = useState();
+    const [pubkey, setPubkey] = useState('');
+    const [salt, setSalt] = useState('');
 
     useEffect(() => {
         PermissionsAndroid.request(
@@ -41,12 +45,63 @@ const Contact = () => {
     //     //   console.error('An error occured', err)
     //     // );
     //   };
+    const OnScanQrCode = (value) => {
+        const data = JSON.parse(value);
+        setPubkey(data.publickey); 
+        setSalt(data.salt);
+        setScan(false); 
+    }
+
+    const onConfirm = () => {
+        const cacheData = Cache.data;
+        const contract = cacheData.contract;
+        const circleId = cacheData.circle;
+        const AliceId = cacheData.id;
+        const saltAlice = cacheData.salt;
+        const pubkeyInUTXO = cacheData.publickey;
+        const addressOfUTXO = cacheData.newUTXO;
+        const AliceNewPubKey = cacheData.publickey;
+        const BobId = user?.phoneNumbers[0]?.number;
+        const saltBob = salt;
+        const BobPubkey = pubkey;
+
+        API.oraclePleaseSignTx(AliceId, saltAlice, AliceNewPubkey, circleId, addressofUTXO, pubkeyInUTXO, BobPubkey, BobId, saltBob, contract, function (error, response){
+            console.log(error, response);
+            if (error === null){
+                //sign in
+                //const s = bitcore.HDPrivateKey.fromSeed(cacheData.wallet, "regtest");
+                //const psbt_from_oracle_to_sigin = bitcoin.Psbt.fromBase64(response.psbtBaseText, {network: "regtest"});
+                //psbt_from_oracle_to_sigin.signAllInputs(s);
+                //psbt_from_oracle_to_sigin.combine(bitcoin.Psbt.fromBase64(response.psbtSignedByOracleBaseText, {network:"regtest"}));
+                //psbt_from_oracle_to_sigin.finalizeInput(0,  ???);
+                
+                //brodcast
+                API.broadcastToRegtest(psbt_from_oracle_to_sigin, function(error1, response1){
+                    console.log(error1, response1);
+                    if (error1 === null){
+                        cacheData.newUTXO = response1.addressofUTXO;
+                        Cache.data = cacheData;           
+                        var encrypted = CryptoJS.AES.encrypt(JSON.stringify(cacheData), cacheData.pin).toString();
+                        UpdateDeviceStore(encrypted, function(err, updateddata){
+                            console.log(err, data);                                                  
+                            setModal(false);    
+                            setSelectedUser(null)
+                            Alert('Success added!')
+                        }) 
+                    }                
+                });
+                //Actions.Seven();
+            } else {
+                alert(error);
+            }
+        });              
+    }
 
     if(scan){
         return(
         <View style={{ flex: 1, marginTop: -50, backgroundColor: '#000'}}>
             <QRCodeScanner
-            onRead={(e)=>{setPubkey(e.rawData); setScan(false); }}
+            onRead={(e)=> OnScanQrCode(e.rawData)}
             flashMode={RNCamera.Constants.FlashMode.torch}
         />
         </View>)
@@ -80,14 +135,14 @@ const Contact = () => {
 
             </ScrollView>
             <View style={{ height: 76 }} />
-            {modal && <ConfirmModal pubkey={pubkey} user={selectedUser} onClose={()=>{ setModal(false);setSelectedUser(null)}} onScan={()=>setScan(true)}/>}
+            {modal && <ConfirmModal pubkey={pubkey} user={selectedUser} onConfirm={()=> onConfirm()} onClose={()=>{ setModal(false);setSelectedUser(null)}} onScan={()=>setScan(true)}/>}
         </LinearGradient>
     }
 }
 
 
 function ConfirmModal(props) {
-    const { user, onClose, onScan, pubkey } = props;
+    const { user, onClose, onConfirm, onScan, pubkey } = props;
     return (
         <Modal
             transparent
@@ -121,15 +176,25 @@ function ConfirmModal(props) {
                                 <Text>PubKey:</Text>
                             </View>
                             <View style={{ flex: 3, flexDirection: 'row', alignItems: 'center'}}>
-                                <TextInput style={styles.modalInput} placeholder={'Search'} value={pubkey}/>
+                                <TextInput style={styles.modalInput} placeholder={'PubKey'} value={pubkey}/>
                                 <TouchableOpacity onPress={()=>onScan()} style={styles.scanBtn}>
                                     <Text style={styles.buttonText}>Scan</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
+
+                        <View style={{ flexDirection: 'row', marginTop: 8, alignItems: 'center'}}>
+                            <View style={{ flex: 1}}>
+                                <Text>Salt:</Text>
+                            </View>
+                            <View style={{ flex: 3, flexDirection: 'row', alignItems: 'center'}}>
+                                <TextInput style={styles.modalInput} placeholder={'Salt'} value={salt}/>
+                            </View>
+                        </View>
+
                     </View>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={() => { Actions.Seven(); onClose(false); }} style={styles.button}>
+                        <TouchableOpacity onPress={() => onConfirm()} style={styles.button}>
                             <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => onClose(false)} style={[styles.button, { backgroundColor: '#DD4F43'}]}>

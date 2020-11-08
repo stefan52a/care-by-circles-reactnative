@@ -33,10 +33,10 @@ const Root = () => {
         <View style={styles.container}>
             <Router >
                 <Stack key="root" hideNavBar>
-                    <Scene key="Nav" component={AppNavigator} initial={true} />
+                    <Scene key="Nav" component={AppNavigator} />
                     <Scene key="Main" component={Main} />
                     <Scene key="Home" component={Home}/>
-                    <Scene key="SignInUp" component={SignInUp}/>
+                    <Scene key="SignInUp" component={SignInUp} initial={true}/>
                     <Scene key="GenerateWallet" component={GenerateWallet}/>
                     <Scene key="Seed" component={Seed} />                    
                     <Scene key="First" component={First} />

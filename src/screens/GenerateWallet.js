@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import images from '../config/images';
 import bip39 from 'react-native-bip39'
 import CryptoJS, { enc } from "react-native-crypto-js";
-import {WriteLocalWalletFile, ReadLocalWalletFile, getPublicKey} from '../libs/utils'
+import {UpdateDeviceStore, ReadDeviceStore, getPublicKey} from '../libs/utils'
 import Cache from '../utils/cache'
 import API from '../service/api'
 import RNSimData from 'react-native-sim-data'
@@ -17,6 +17,16 @@ AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
 var extHeight = (screenHeight - 650) / 15
+
+function makeSalt(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
 
 const GenerateWallet = (props) => {
     const option = props.option;
@@ -51,6 +61,8 @@ const GenerateWallet = (props) => {
       requestPhonePermission();
     }
 
+
+
     const clickNext = async () => {
         if (option === "create"){
             if (pin !== confirm_pin) {
@@ -62,25 +74,35 @@ const GenerateWallet = (props) => {
             console.log('passphrase', passphrase);
             //const wallet = bip39.mnemonicToEntropy(passphrase);
             var seed = await bip39.mnemonicToSeedHex(passphrase)         
+            var salt = makeSalt(64);
             const publickey = getPublicKey(seed);       
-            const data = {
-                wallet: seed,
-                publickey: publickey
-            }
             console.log(JSON.stringify(data));
             let phone = phonenumber? phonenumber : RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
-            console.log(phone, publickey)
-            //phone = '+33-6-233787929'
-            API.oracleGetAirdrop(phone, publickey, function (error, response){                    
+            
+            const qrcode = {
+                publickey:  publickey,
+                salt: salt
+            }
+            const qrcode_string = JSON.stringify(qrcode);
+            const data = {
+                id: phone,
+                pin: pin,
+                wallet: seed,
+                publickey: publickey,
+                salt: salt,
+                qrcode_string
+            }            
+            
+            API.oracleGetAirdrop(phone, publickey, salt, function (error, response){                    
                 console.log('-------  oracleGetAirdrop ------------');                    
                 console.log(error, response);
                 if (error == null){
                     data.contract = response.contract
-                    data.Circle = response.Circle
-                    data.psbt = response.psbt
-                    data.tokens = response.tokens
+                    data.Circle = response.Circle                    
+                    data.newUTXO = response.addressOfUTXO
+                    //data.satoshi = response.satoshiAliceLeft
                     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), pin).toString();
-                    WriteLocalWalletFile(encrypted, function(err, data){
+                    UpdateDeviceStore(encrypted, function(err, data){
                         console.log(err, data);
                         Cache.data = data;                                 
                         Actions.Nav({ pin: pin });
@@ -89,10 +111,8 @@ const GenerateWallet = (props) => {
                     alert(`oracleGetAirdrop error: ${error.error}`)
                 }
             })
-
-
         } else {
-            ReadLocalWalletFile(function(err, data){
+            ReadDeviceStore(function(err, data){
                 console.log(err, data);
                 if (err == null){
                     var decrypted = CryptoJS.AES.decrypt(data, pin).toString(CryptoJS.enc.Utf8);                    

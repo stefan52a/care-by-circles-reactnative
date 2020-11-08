@@ -13,13 +13,17 @@ module.exports = {
         Cache.currentBackend_URL = backendURL;
         this.baseApi('GiveTxIdToOracle', 'POST', { id, txId, instanceCircles, contract }, cb);
     },
-    oraclePleaseSignTx(id, circleId, pubkeyInUTXO, newPubkeyId, pubkeyNewId, newId, contract, cb) {
+    oraclePleaseSignTx(AliceId, saltAlice, AliceNewPubkey, circleId, addressofUTXO, pubkeyInUTXO, BobPubkey, BobId, saltBob, contract, cb) {
         Cache.currentBackend_URL = backendURL;
-        this.baseApi('oraclePleaseSignTx', 'POST', { id, circleId, pubkeyInUTXO, newPubkeyId, pubkeyNewId, newId, contract }, cb);
+        this.baseApi('oraclePleaseSignTx', 'POST', { AliceId, saltAlice, pubkeyInUTXO, circleId, addressofUTXO, AliceNewPubkey, BobPubkey, BobId, saltBob, contract}, cb);
     },
-    oracleGetAirdrop(id, pubkey, cb) {
+    broadcastToRegtest(psbtToBroadcast, cb) {
         Cache.currentBackend_URL = backendURL;
-        this.baseApi('oracleGetAirdrop', 'POST', { AliceId:id, AlicePubkey:pubkey }, cb);
+        this.baseApi('broadcastToRegtest', 'POST', { psbtToBroadcast }, cb);
+    },
+    oracleGetAirdrop(id, pubkey, salt, cb) {
+        Cache.currentBackend_URL = backendURL;
+        this.baseApi('oracleGetAirdrop', 'POST', { AliceId:id, AlicePubkey:pubkey, saltAlice: salt }, cb);
     },
     async baseApi(sub_url, method, json_data, cb) {
         try {
