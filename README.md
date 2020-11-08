@@ -1,5 +1,7 @@
 # Care By Circles Oracle
 
+Android & iOS client, WIP
+
 See https://CareByCircles.Com
 
 [![Promo Care By Circles](READMEImages/CareByCircles.gif)](https://youtu.be/YczwK4v-uJ0)
