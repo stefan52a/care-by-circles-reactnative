@@ -13,7 +13,7 @@ const Main = () => {
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
-            <Text style={styles.normalText}>{'Do you have COVID symptoms?'}</Text>
+            <Text style={styles.normalText}>{'Do you need assistance with COVID?'}</Text>
             <Text style={styles.normalText}>{'If Yes, press the HELP button.'}</Text>
             <View style={styles.main}>
                 <Image source={images.button} style={styles.image} />

@@ -86,7 +86,7 @@ const Contact = () => {
                             console.log(err, data);                                                  
                             setModal(false);    
                             setSelectedUser(null)
-                            Alert('Success added!')
+                            Alert('Successfully added!')
                         }) 
                     }                
                 });

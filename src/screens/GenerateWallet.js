@@ -66,7 +66,7 @@ const GenerateWallet = (props) => {
     const clickNext = async () => {
         if (option === "create"){
             if (pin !== confirm_pin) {
-                alert('pin is not match.');
+                alert('pins do not match.');
                 return;
             }            
             
@@ -121,7 +121,7 @@ const GenerateWallet = (props) => {
                     console.log(decrypted_json);                    
                     Actions.Nav({ pin: pin });                              
                 } else {
-                    alert('incorrect pin! if you are first, please sign up first!');
+                    alert('Incorrect pin! Please sign up first!');
                     return;
                 }                
             })

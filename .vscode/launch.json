@@ -4,6 +4,21 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "name": "Run Android Hermes - Experimental",
+            "cwd": "${workspaceFolder}",
+            "type": "reactnativedirect",
+            "request": "launch",
+            "platform": "android",
+            "enableDebug": false
+        },
+    {
+        "name": "React Native Direct: Attach to the React Native Hermes - Experimental",
+        "cwd": "${workspaceFolder}",
+        "type": "reactnativedirect",
+        "request": "attach"
+    },
         {
             "name": "Debug Android",
             "cwd": "${workspaceFolder}",
