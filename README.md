@@ -23,13 +23,7 @@ Also see the server "Care by Circles Oracle Server" elsewhere on this platform.
 Once:
 ````
 npm install -g react-native-cli
-````
-not sure you'll need:
-````
 npm i
-````
-But you do need:
-````
 ./node_modules/.bin/rn-nodeify --hack --install
 ````
 Every time e.g. when debugging:
