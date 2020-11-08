@@ -8,6 +8,8 @@ See https://CareByCircles.Com
 
 Smartphone client for CirclesOracle.
 
+## Current status ##
+
 Care by Circles, social inclusion.
 
 Circles are tribes with a maximum of 150 (Dunbar's number) people each.
@@ -15,3 +17,22 @@ Circles are tribes with a maximum of 150 (Dunbar's number) people each.
 Under the hood it uses Bitcoin blockchain principles for consensus and Oracle contracts with Partially Signed Bitcoin Transactions (PSBT).
 
 Also see the server "Care by Circles Oracle Server" elsewhere on this platform.
+
+## How to run ##
+
+Once:
+````
+npm install -g react-native-cli
+````
+not sure you'll need:
+````
+npm i
+````
+But you do need:
+````
+./node_modules/.bin/rn-nodeify --hack --install
+````
+Every time e.g. when debugging:
+````
+react-native run-android
+````
