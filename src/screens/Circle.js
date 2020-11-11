@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
+import { Actions } from 'react-native-router-flux';
 
 const { width } = Dimensions.get('window');
 const users = ['Jack', 'Rob', 'Sam', 'Mike', 'Esko', 'Taura']
@@ -16,7 +17,7 @@ const Circle = () => {
             end={{ x: 1, y: 1 }}
         >
             <View style={styles.header}>
-                <Image source={images.users} style={{ width: 37, height: 30}}/>
+                <Image source={images.users} style={{ width: 37, height: 30 }} />
                 <Text>My Circle</Text>
                 <Text>4/150</Text>
             </View>
@@ -31,8 +32,13 @@ const Circle = () => {
                                     </View>
                                     <Text numberOfLines={1} style={{ textAlign: 'center', color: '#fff', marginTop: 3 }}>{item}</Text>
                                 </View>
-                                <View style={styles.btn}>
-                                    <Text style={{ color: 'grey', fontSize: 18, color: '#4f4f4f' }}>Reach Out</Text>
+                                <View>
+                                    <View style={styles.btn}>
+                                        <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Reach Out</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={()=>Actions.TimeLeft({name: item})} style={styles.btn}>
+                                        <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Vote</Text>
+                                    </TouchableOpacity>
                                 </View>
                                 <Image source={images.switch} style={styles.switch} />
                             </View>)
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
     image: {
         width: width / 4.8,
         height: width / 4.8,
-        borderRadius: width/9.6,
+        borderRadius: width / 9.6,
         resizeMode: 'contain',
     },
     switch: {
@@ -105,10 +111,10 @@ const styles = StyleSheet.create({
     btn: {
         margin: 12,
         paddingHorizontal: 12,
-        paddingVertical: 8,
+        paddingVertical: 4,
         backgroundColor: '#fff',
         borderRadius: 15,
-        marginTop: 5,
+        marginTop: 2,
         textAlign: 'center',
         justifyContent: 'center',
         alignItems: 'center',

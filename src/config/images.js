@@ -7,10 +7,15 @@ export default {
     home: require('../../assets/home.png'),
     notification: require('../../assets/notification.png'),
     wallet: require('../../assets/wallet.png'),
-
     user: require('../../assets/user.png'),
     users: require('../../assets/users.png'),
     switch: require('../../assets/switch.png'),
+    redBtn: require('../../assets/red.png'),
+    greenBtn: require('../../assets/green.png'),
+    pinkBtn: require('../../assets/pink.png'),
+    bigBtn: require('../../assets/bigBtn.png'),
 
-    
+    upThumb: require('../../assets/up.png'),
+    downThumb: require('../../assets/down.png'),
+
 }

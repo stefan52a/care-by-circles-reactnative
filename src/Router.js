@@ -26,6 +26,7 @@ import GenerateWallet from './screens/GenerateWallet'
 import Main from './screens/Main';
 import AppNavigator from './AppNavigator';
 import Wallet from './screens/Wallet';
+import TimeLeft from './screens/TimeLeft';
 
 const Root = () => {
 
@@ -33,7 +34,7 @@ const Root = () => {
         <View style={styles.container}>
             <Router >
                 <Stack key="root" hideNavBar>
-                    <Scene key="Nav" component={AppNavigator} />
+                    <Scene key="Nav" component={AppNavigator} initial={false}/>
                     <Scene key="Main" component={Main} />
                     <Scene key="Home" component={Home}/>
                     <Scene key="SignInUp" component={SignInUp} initial={true}/>
@@ -46,6 +47,7 @@ const Root = () => {
                     <Scene key="Five" component={Five}/>
                     <Scene key="Six" component={Six}/>
                     <Scene key="Seven" component={Seven}/>
+                    <Scene key="TimeLeft" component={TimeLeft}/>
                 </Stack>
             </Router>
         </View>
