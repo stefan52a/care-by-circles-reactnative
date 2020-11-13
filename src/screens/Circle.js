@@ -4,11 +4,27 @@ import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import { Actions } from 'react-native-router-flux';
+import Share from 'react-native-share';
+import imgs from '../config/imagesBase64';
 
 const { width } = Dimensions.get('window');
 const users = ['Jack', 'Rob', 'Sam', 'Mike', 'Esko', 'Taura']
 
 const Circle = () => {
+    const shareSingleImage = async () => {
+        const shareOptions = {
+          title: 'Share file',
+          url: imgs.image1,
+          failOnCancel: false,
+        };
+    
+        try {
+          const ShareResponse = await Share.open(shareOptions);
+          console.log('result =>', ShareResponse);
+        } catch (error) {
+          console.log('Error =>', error);
+        }
+      };
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}
@@ -33,10 +49,10 @@ const Circle = () => {
                                     <Text numberOfLines={1} style={{ textAlign: 'center', color: '#fff', marginTop: 3 }}>{item}</Text>
                                 </View>
                                 <View>
-                                    <View style={styles.btn}>
+                                    <TouchableOpacity style={styles.btn} onPress={shareSingleImage}>
                                         <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Reach Out</Text>
-                                    </View>
-                                    <TouchableOpacity onPress={()=>Actions.TimeLeft({name: item})} style={styles.btn}>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => Actions.TimeLeft({ name: item })} style={styles.btn}>
                                         <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Vote</Text>
                                     </TouchableOpacity>
                                 </View>

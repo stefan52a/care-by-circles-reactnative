@@ -1,12 +1,16 @@
-import React from 'react';
-import { View, Text, ImageBackground, Image, StyleSheet, Dimensions } from 'react-native'
+import React, { useState } from 'react';
+import { View, Text, ImageBackground, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
+import { ceil } from 'react-native-reanimated';
+import { Actions } from 'react-native-router-flux';
 
 const { width } = Dimensions.get('window');
 
 const TimeLeft = (props) => {
-    const {name} = props.navigation.state.params;
+    const [like, setLike] = useState(22);
+    const [unlike, setUnlike] = useState(10);
+    const { name } = props.navigation.state.params;
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}
@@ -14,30 +18,34 @@ const TimeLeft = (props) => {
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
+            <TouchableOpacity style={styles.backBtn} onPress={()=>Actions.pop()}>
+                <Text style={{ color: 'grey'}}>Back</Text>
+            </TouchableOpacity>
             <ImageBackground source={images.bigBtn} style={styles.image}>
                 <Image source={images.user} style={styles.user} />
-                <Text style={styles.helpText}>{'Does ' + name +' have\n Corona Virus?'}</Text>
+                <Text style={styles.helpText}>{'Does ' + name + ' have\n Corona Virus?'}</Text>
             </ImageBackground>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%'}}>
-                <View>
-                    <View style={[styles.btn, {backgroundColor: '#2bb063'}]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
+                <TouchableOpacity onPress={() => setLike(like + 1)}>
+                    <View style={styles.btn}>
                         <Image source={images.upThumb} style={styles.thumb} />
-                    </View>   
-                    <Text style={{ alignSelf: 'center', color: '#fff'}}>22</Text>
-                </View>
-                <View>
-                <View style={[styles.btn, {backgroundColor: '#eb5b5b'}]}>
+                    </View>
+                    <Text style={{ alignSelf: 'center', color: '#fff' }}>{like}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setUnlike(unlike + 1)}>
+                    <View style={styles.btn}>
                         <Image source={images.downThumb} style={styles.thumb} />
                     </View>
-                    <Text style={{ alignSelf: 'center', color: '#fff'}}>10</Text>
-                </View>
+                    <Text style={{ alignSelf: 'center', color: '#fff' }}>{unlike}</Text>
+                </TouchableOpacity>
             </View>
-            <Text style={{ color: '#fff', marginBottom: 8}}>Time Left</Text>
-            <View style={styles.btn}>
-                <Text style={{fontWeight: '600', fontSize: 18, marginTop: 10}}>{'00:45'}</Text>
-                <Text>{'mins'}</Text>    
-            </View>
-        </LinearGradient> 
+            <Text style={{ color: '#fff', marginBottom: 8, fontSize: 17 }}>Time Left</Text>
+            <ImageBackground source={images.timeIcon} style={styles.time}>
+                <Text style={{ fontWeight: '600', fontSize: 36, color: '#fff' }}>{24}</Text>
+            </ImageBackground>
+            <Text style={{ color: '#fff', fontSize: 17, marginTop: 6}}>{'MINUTES'}</Text>
+
+        </LinearGradient>
     )
 }
 
@@ -52,7 +60,7 @@ const styles = StyleSheet.create({
     helpText: {
         marginTop: 10,
         fontSize: 15,
-        color: "white",
+        color: "grey",
         textAlign: 'center',
     },
     normalText: {
@@ -61,16 +69,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     image: {
-        width: width/1.7,
-        height: width/1.7,
+        width: 216,
+        height: 216,
+        borderRadius: 108,
         marginTop: -10,
         resizeMode: 'contain',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#fff',
     },
     user: {
-        width: width/4,
-        height: width/4,
+        width: 104,
+        height: 110,
     },
     thumb: {
         width: 40,
@@ -79,12 +89,26 @@ const styles = StyleSheet.create({
     btn: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: 80,
-        height: 80,
+        width: 69,
+        height: 69,
         borderRadius: 40,
-        backgroundColor: '#FFC1F9',
-        borderColor: '#fff',
-        borderWidth: 1,
-        elevation:0.3
+        backgroundColor: '#FFF',
+        elevation: 0.3
+    },
+    time: {
+        width: 120,
+        height: 120,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    backBtn: {
+        margin: 12,
+        width: 75,
+        height: 36,
+        borderRadius: 22,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'flex-start'
     }
 })

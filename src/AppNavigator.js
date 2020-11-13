@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { Text, View, Image } from 'react-native';
+import { Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Home from './screens/Home';
-import SignInUp from './screens/SignInUp';
 import Main from './screens/Main';
 import images from './config/images';
 import Contact from './screens/Contact';

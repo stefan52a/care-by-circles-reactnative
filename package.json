@@ -53,6 +53,8 @@
     "react-native-router-flux": "^4.2.0",
     "react-native-safe-area-context": "^3.1.8",
     "react-native-screens": "^2.12.0",
+    "react-native-share": "^4.1.0",
+    "react-native-share-menu": "^5.0.2",
     "react-native-sim-data": "^3.0.0",
     "react-native-svg": "^12.1.0",
     "react-native-tcp": "^3.3.2",

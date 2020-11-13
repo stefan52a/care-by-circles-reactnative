@@ -85,6 +85,8 @@ target 'corona' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'RNShare', :path => '../node_modules/react-native-share'
+
   target 'coronaTests' do
     inherit! :complete
     # Pods for testing

@@ -11,9 +11,7 @@ export default {
     users: require('../../assets/users.png'),
     switch: require('../../assets/switch.png'),
     redBtn: require('../../assets/red.png'),
-    greenBtn: require('../../assets/green.png'),
-    pinkBtn: require('../../assets/pink.png'),
-    bigBtn: require('../../assets/bigBtn.png'),
+    timeIcon: require('../../assets/time.png'),
 
     upThumb: require('../../assets/up.png'),
     downThumb: require('../../assets/down.png'),

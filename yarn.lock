@@ -6883,6 +6883,16 @@ react-native-screens@^2.12.0:
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.12.0.tgz#579b7a6f99b3dd777ef4a447682e46f10ce9f5eb"
   integrity sha512-sJn7xrbVXYYQ1FBKp4eg3NXL7e2EpORT5xeQcXRJHCqt5ZcGduybZWE4tFbnBeaHE5YNab9owdrrDOJTBDKKFw==
 
+react-native-share-menu@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-share-menu/-/react-native-share-menu-5.0.2.tgz#e755f44f174850296a4f08d25ea0019d57187eee"
+  integrity sha512-YO9YVd5u/EGL90xSRDueD1ncmQ+fHyxPd2hg0qFWLDk/73OmuWY9ImxpoTMlbUyHO/epX9hgddZrdCa5kmgBAg==
+
+react-native-share@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-4.1.0.tgz#78083d03c236849342decd0ecbc0bb9b77f1eb72"
+  integrity sha512-ytkgi9UsjQviKgWKuniApomB3opjydxPKnrApBF+SPMnQFVVDlH5EyHR6rK+qxMtIAcspb7ylNPj3KzgO+YCrg==
+
 react-native-sim-data@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-native-sim-data/-/react-native-sim-data-3.0.0.tgz#edc8e3ebdf8d5ec131fa5d5da84d803c1493ab26"
