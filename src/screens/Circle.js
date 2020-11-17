@@ -55,8 +55,7 @@ const Circle = () => {
                                     <TouchableOpacity onPress={() => Actions.TimeLeft({ name: item })} style={styles.btn}>
                                         <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Vote</Text>
                                     </TouchableOpacity>
-                                </View>
-                                <Image source={images.switch} style={styles.switch} />
+                                </View>                                
                             </View>)
                     }
                 </View>
