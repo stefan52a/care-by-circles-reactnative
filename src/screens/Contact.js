@@ -9,7 +9,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 import bitcoin from 'react-native-bitcoinjs-lib';
 import bitcore from 'bitcore-lib-react-native';
-import {UpdateDeviceStore} from '../libs/utils'
+import bitcoinlib from 'bitcoinjs-lib'
+import {UpdateDeviceStore, getFinalScripts2} from '../libs/utils'
 
 const { width } = Dimensions.get('window');
 
@@ -69,7 +70,11 @@ const Contact = () => {
             console.log(error, response);
             if (error === null){
                 //sign in
-                //const s = bitcore.HDPrivateKey.fromSeed(cacheData.wallet, "regtest");
+                const s = bitcore.HDPrivateKey.fromSeed(cacheData.wallet, "regtest");
+                const psbt_from_oracle_to_sigin = bitcoinlib.Psbt.fromBase64(response.psbtBaseText, {network: "regtest"});
+                psbt_from_oracle_to_sigin.signAllInputs(s);
+                psbt_from_oracle_to_sigin.combine(bitcoin.Psbt.fromBase64(response.psbtSignedByOracleBaseText, {network:"regtest"}));
+                psbt_from_oracle_to_sigin.finalizeInput(0,  getFinalScripts2)
                 //const psbt_from_oracle_to_sigin = bitcoin.Psbt.fromBase64(response.psbtBaseText, {network: "regtest"});
                 //psbt_from_oracle_to_sigin.signAllInputs(s);
                 //psbt_from_oracle_to_sigin.combine(bitcoin.Psbt.fromBase64(response.psbtSignedByOracleBaseText, {network:"regtest"}));
