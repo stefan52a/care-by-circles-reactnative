@@ -14,7 +14,8 @@ const Circle = () => {
     const shareSingleImage = async () => {
         const shareOptions = {
           title: 'Share file',
-          url: imgs.image1,
+          message: 'Hello. This is test message.',
+        //   url: imgs.image1,
           failOnCancel: false,
         };
     
