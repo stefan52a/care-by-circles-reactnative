@@ -78,8 +78,7 @@ const Contact = () => {
                 //const psbt_from_oracle_to_sigin = bitcoin.Psbt.fromBase64(response.psbtBaseText, {network: "regtest"});
                 //psbt_from_oracle_to_sigin.signAllInputs(s);
                 //psbt_from_oracle_to_sigin.combine(bitcoin.Psbt.fromBase64(response.psbtSignedByOracleBaseText, {network:"regtest"}));
-                //psbt_from_oracle_to_sigin.finalizeInput(0,  ???);
-                
+                //psbt_from_oracle_to_sigin.finalizeInput(0,  ???);                
                 //brodcast
                 API.broadcastToRegtest(psbt_from_oracle_to_sigin, function(error1, response1){
                     console.log(error1, response1);

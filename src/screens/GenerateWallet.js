@@ -44,6 +44,8 @@ const GenerateWallet = (props) => {
           )
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {            
             const phonenumber =  RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
+            console.log('phonenumber', phonenumber);
+            if (phonenumber == "") phonenumber = '+31-6-233787929';
             setPhoneNumber(phonenumber);            
           } else {
             Alert.alert("App permission denied!")
@@ -75,10 +77,9 @@ const GenerateWallet = (props) => {
             //const wallet = bip39.mnemonicToEntropy(passphrase);
             var seed = await bip39.mnemonicToSeedHex(passphrase)         
             var salt = makeSalt(64);
-            const publickey = getPublicKey(seed);       
-            console.log(JSON.stringify(data));
+            const publickey = getPublicKey(seed);                   
             let phone = phonenumber? phonenumber : RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
-            
+            //phone = '+31-6-233787910';
             const qrcode = {
                 publickey:  publickey,
                 salt: salt
@@ -92,7 +93,7 @@ const GenerateWallet = (props) => {
                 salt: salt,
                 qrcode_string
             }            
-            
+            console.log('data', data);
             API.oracleGetAirdrop(phone, publickey, salt, function (error, response){                    
                 console.log('-------  oracleGetAirdrop ------------');                    
                 console.log(error, response);
