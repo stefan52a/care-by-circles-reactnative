@@ -38,8 +38,15 @@ module.exports = {
                 //json_data['api_key'] = API_KEY;
                 request['body'] = JSON.stringify(json_data);
             }
-
-            let response = await fetch(Cache.currentBackend_URL + sub_url, request);
+            console.log('calling api --', Cache.currentBackend_URL + sub_url, request);
+            let response = null;
+            try {
+                response = await fetch(Cache.currentBackend_URL + sub_url, request);
+            } catch(err){
+                console.log(err);
+                cb(err);
+            }                       
+            console.log('calling api response --', response);
             let responseJson = await response.json();
             console.log('responseJson', responseJson);
             if (response.status == 200) {

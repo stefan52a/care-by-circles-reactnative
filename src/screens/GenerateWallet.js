@@ -93,7 +93,7 @@ const GenerateWallet = (props) => {
                 salt: salt,
                 qrcode_string
             }            
-            console.log('data', data);
+            console.log('phone, publickey, salt', phone, publickey, salt);
             API.oracleGetAirdrop(phone, publickey, salt, function (error, response){                    
                 console.log('-------  oracleGetAirdrop ------------');                    
                 console.log(error, response);

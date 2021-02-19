@@ -33,7 +33,7 @@ const Contact = () => {
             }
         )
             .then(Contacts.getAll().then(contacts => {
-                // console.log(contacts);
+                console.log('contacts',contacts);
                 setUsers(contacts);
             }))
     }, [Contacts, PermissionsAndroid]);
@@ -67,7 +67,7 @@ const Contact = () => {
         const BobPubkey = pubkey;
 
         API.oraclePleaseSignTx(AliceId, saltAlice, AliceNewPubkey, circleId, addressofUTXO, pubkeyInUTXO, BobPubkey, BobId, saltBob, contract, function (error, response){
-            console.log(error, response);
+            console.log('oraclePleaseSignTx', error, response);
             if (error === null){
                 //sign in
                 const s = bitcore.HDPrivateKey.fromSeed(cacheData.wallet, "regtest");
@@ -81,7 +81,7 @@ const Contact = () => {
                 //psbt_from_oracle_to_sigin.finalizeInput(0,  ???);                
                 //brodcast
                 API.broadcastToRegtest(psbt_from_oracle_to_sigin, function(error1, response1){
-                    console.log(error1, response1);
+                    console.log('broadcastToRegtest', error1, response1);
                     if (error1 === null){
                         cacheData.newUTXO = response1.addressofUTXO;
                         Cache.data = cacheData;           
@@ -139,14 +139,14 @@ const Contact = () => {
 
             </ScrollView>
             <View style={{ height: 76 }} />
-            {modal && <ConfirmModal pubkey={pubkey} user={selectedUser} onConfirm={()=> onConfirm()} onClose={()=>{ setModal(false);setSelectedUser(null)}} onScan={()=>setScan(true)}/>}
+            {modal && <ConfirmModal pubkey={pubkey} user={selectedUser} salt={salt} onConfirm={()=> onConfirm()} onClose={()=>{ setModal(false);setSelectedUser(null)}} onScan={()=>setScan(true)}/>}
         </LinearGradient>
     }
 }
 
 
 function ConfirmModal(props) {
-    const { user, onClose, onConfirm, onScan, pubkey } = props;
+    const { user, onClose, onConfirm, onScan, pubkey, salt } = props;
     return (
         <Modal
             transparent
