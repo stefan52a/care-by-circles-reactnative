@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
@@ -6,11 +6,59 @@ import { ceil } from 'react-native-reanimated';
 import { Actions } from 'react-native-router-flux';
 
 const { width } = Dimensions.get('window');
+let timerAelrt
+let timeSecondValue
+let angle
+let angleStr = '360deg'
 
 const TimeLeft = (props) => {
     const [like, setLike] = useState(22);
     const [unlike, setUnlike] = useState(10);
+    const [timeSecond, setTimeSecond] = useState("59");
+    const [timeMinutes, setTimeMinutes] = useState("59");
+    const [flag, setFlag] = useState(0);
     const { name } = props.navigation.state.params;
+    useEffect(() => {
+        timeSecondValue = 3600
+        angle = 360
+        angleStr = '360deg'
+        let index = 0
+        timerAelrt = setInterval(() => {
+            if (angle < 360) {
+                angle = angle + 10
+                angleStr = angle + 'deg'
+            } else {
+                angle = 0
+                angleStr = '0deg'
+            }
+            setFlag(angle)
+            index++
+            if (index == 10) {
+                index = 0
+                if (timeSecondValue > 0) {
+                    timeSecondValue = timeSecondValue - 1
+                    let secondValue = timeSecondValue % 60
+                    let minutesValue = parseInt(timeSecondValue / 60)
+                    let secondValueStr = secondValue
+                    let minutesValueStr = minutesValue
+                    if (secondValue < 10) {
+                        secondValueStr = '0' + secondValue
+                    }
+                    if (minutesValue < 10) {
+                        minutesValueStr = '0' + minutesValue
+                    }
+                    setTimeSecond(secondValueStr)
+                    setTimeMinutes(minutesValueStr)
+                } else {
+                    clearInterval(timerAelrt)
+                }
+            }
+        }, 100)
+        return () => {
+            clearInterval(timerAelrt)
+        }
+    }, []);
+
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}
@@ -18,12 +66,15 @@ const TimeLeft = (props) => {
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
-            <TouchableOpacity style={styles.backBtn} onPress={()=>Actions.pop()}>
-                <Text style={{ color: 'grey'}}>Back</Text>
+            <TouchableOpacity style={styles.backBtn} onPress={() => {
+                clearInterval(timerAelrt)
+                Actions.pop()
+            }}>
+                <Text style={{ color: 'grey' }}>Back</Text>
             </TouchableOpacity>
             <ImageBackground source={images.bigBtn} style={styles.image}>
                 <Image source={images.user} style={styles.user} />
-                <Text style={styles.helpText}>{'Does ' + name + ' have\n Corona Virus?'}</Text>
+                <Text style={styles.helpText}>{ name + ' have\n Corona Virus?'}</Text>
             </ImageBackground>
             <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
                 <TouchableOpacity onPress={() => setLike(like + 1)}>
@@ -40,11 +91,16 @@ const TimeLeft = (props) => {
                 </TouchableOpacity>
             </View>
             <Text style={{ color: '#fff', marginBottom: 8, fontSize: 17 }}>Time Left</Text>
-            <ImageBackground source={images.timeIcon} style={styles.time}>
-                <Text style={{ fontWeight: '600', fontSize: 36, color: '#fff' }}>{24}</Text>
-            </ImageBackground>
-            <Text style={{ color: '#fff', fontSize: 17, marginTop: 6}}>{'MINUTES'}</Text>
-
+            <View style={styles.time}>
+                <ImageBackground source={images.timeIcon}
+                    style={[styles.timeImage, {
+                        transform: [{ rotate: angleStr }]
+                    }]}>
+                </ImageBackground>
+                <Text style={{ fontWeight: '600', fontSize: 24, color: '#fff' }}>{timeMinutes}</Text>
+                <Text style={{ fontWeight: '600', fontSize: 18, color: '#fff' }}>{timeSecond}</Text>
+            </View>
+                <Text style={{ color: '#fff', fontSize: 17, marginTop: 6 }}>{'MINUTES'}</Text>
         </LinearGradient>
     )
 }
@@ -99,7 +155,16 @@ const styles = StyleSheet.create({
         width: 120,
         height: 120,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    timeImage: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: 120,
+        height: 120,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     backBtn: {
         margin: 12,

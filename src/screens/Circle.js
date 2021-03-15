@@ -13,19 +13,19 @@ const users = ['Jack', 'Rob', 'Sam', 'Mike', 'Esko', 'Taura']
 const Circle = () => {
     const shareSingleImage = async () => {
         const shareOptions = {
-          title: 'Share file',
-          message: 'Hello. This is test message.',
-        //   url: imgs.image1,
-          failOnCancel: false,
+            title: 'Share file',
+            message: 'Hello. This is test message.',
+            //   url: imgs.image1,
+            failOnCancel: false,
         };
-    
+
         try {
-          const ShareResponse = await Share.open(shareOptions);
-          console.log('result =>', ShareResponse);
+            const ShareResponse = await Share.open(shareOptions);
+            console.log('result =>', ShareResponse);
         } catch (error) {
-          console.log('Error =>', error);
+            console.log('Error =>', error);
         }
-      };
+    };
     return (
         <LinearGradient
             colors={['#ED1C24', '#1B1464']}
@@ -53,10 +53,10 @@ const Circle = () => {
                                     <TouchableOpacity style={styles.btn} onPress={shareSingleImage}>
                                         <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Reach Out</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => Actions.TimeLeft({ name: item })} style={styles.btn}>
+                                    <TouchableOpacity onPress={() => Actions.TimeLeft({ name: "Does " + item })} style={styles.btn}>
                                         <Text style={{ color: 'grey', fontSize: 16, color: '#4f4f4f' }}>Vote</Text>
                                     </TouchableOpacity>
-                                </View>                                
+                                </View>
                             </View>)
                     }
                 </View>

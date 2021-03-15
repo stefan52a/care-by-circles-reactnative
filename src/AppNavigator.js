@@ -19,8 +19,8 @@ export default function AppNavigator() {
                     tabBarIcon: ({ focused, color, size }) => {
                         let img = images.group;
                         if (route.name === 'Home') { img = images.home }
-                        else if (route.name === 'Wallet') { img = images.wallet }
-                        else if (route.name === 'Contacts') { img = images.contact }
+                        else if (route.name === 'Join other Circle') { img = images.wallet }
+                        else if (route.name === 'Let join your Circle') { img = images.join }
                         else if (route.name === 'Notifications') { img = images.notification }
                         return <Image source={img} style={{ width: route.name === 'My Circle' ? 37 : 46, height: 46, marginBottom: -5 }} />;
                     },
@@ -40,9 +40,9 @@ export default function AppNavigator() {
                 }}
             >
                 <Tab.Screen name="Home" component={Main} />
-                <Tab.Screen name="Wallet" component={Wallet} />
+                <Tab.Screen name="Join other Circle" component={Wallet} />
                 <Tab.Screen name="My Circle" component={Circle} />
-                <Tab.Screen name="Contacts" component={Contact} />
+                <Tab.Screen name="Let join your Circle" component={Contact} />
                 <Tab.Screen name="Notifications" component={Notification} />
             </Tab.Navigator>
         </NavigationContainer>

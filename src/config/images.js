@@ -4,6 +4,8 @@ export default {
     button: require('../../assets/button.png'),
     stroke: require('../../assets/stroke.png'),
     contact: require('../../assets/contact.png'),
+    join: require('../../assets/join.png'),
+    scan: require('../../assets/scan.png'),
     home: require('../../assets/home.png'),
     notification: require('../../assets/notification.png'),
     wallet: require('../../assets/wallet.png'),

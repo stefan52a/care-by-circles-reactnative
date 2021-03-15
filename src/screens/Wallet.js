@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 
 
 const Wallet = () => {
-    console.log(Cache.data)    
+    console.log("Wallet----", Cache)    
     const publickey = Cache.data.publickey? Cache.data.publickey: '02bd63694cd5a1baac7e543e2a2da2127587e1eaef8ff37b4b7fda1144ec254a22';
     const qrcode_string = Cache.data.qrcode_string;
     return (

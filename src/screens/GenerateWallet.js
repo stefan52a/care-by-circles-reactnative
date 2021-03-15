@@ -7,11 +7,13 @@ import LinearGradient from 'react-native-linear-gradient'
 import images from '../config/images';
 import bip39 from 'react-native-bip39'
 import CryptoJS, { enc } from "react-native-crypto-js";
-import {UpdateDeviceStore, ReadDeviceStore, getPublicKey} from '../libs/utils'
+import { UpdateDeviceStore, ReadDeviceStore, getPublicKey } from '../libs/utils'
 import Cache from '../utils/cache'
 import API from '../service/api'
-import RNSimData from 'react-native-sim-data'
+// import RNSimData from 'react-native-sim-data'
 import { PermissionsAndroid } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import { CLoading } from '../components/CLoading';
 
 AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
@@ -19,11 +21,11 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
 var extHeight = (screenHeight - 650) / 15
 
 function makeSalt(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
 }
@@ -33,100 +35,116 @@ const GenerateWallet = (props) => {
     const [pin, setPin] = useState("");
     const [confirm_pin, setConfirmPin] = useState("");
     const [phonenumber, setPhoneNumber] = useState("");
+    const [loading, setLoading] = useState(false);
     const requestPhonePermission = async () => {
         try {
-          const granted = await PermissionsAndroid.request( PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-            {
-              'title': 'READ_PHONE_STATE Permission',
-              'message': 'READ_PHONE_STATE needs access to your device ' +
-                    'so you can take device imei.'
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+                {
+                    'title': 'READ_PHONE_STATE Permission',
+                    'message': 'READ_PHONE_STATE needs access to your device ' +
+                        'so you can take device imei.'
+                }
+            )
+
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                DeviceInfo.getPhoneNumber().then((phoneNumber) => {
+                    setPhoneNumber(phoneNumber);
+                });
+            } else {
+                Alert.alert("App permission denied!")
             }
-          )
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {            
-            const phonenumber =  RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
-            console.log('phonenumber', phonenumber);
-            if (phonenumber == "") phonenumber = '+31-6-233787929';
-            setPhoneNumber(phonenumber);            
-          } else {
-            Alert.alert("App permission denied!")
-          }
         } catch (err) {
-          console.warn(err)
+            console.warn(err)
         }
     }
 
     const chck = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
-    if (chck  === true) {        
-        const phonenumber =  RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
-        setPhoneNumber(phonenumber);
+    if (chck === true) {
+        DeviceInfo.getPhoneNumber().then((phoneNumber) => {
+            setPhoneNumber(phoneNumber);
+        });
     } else {
-      requestPhonePermission();
+        requestPhonePermission();
     }
 
 
 
     const clickNext = async () => {
-        if (option === "create"){
+        if (option === "create") {
             if (pin !== confirm_pin) {
                 alert('pins do not match.');
                 return;
-            }            
-            
-            const passphrase = await bip39.generateMnemonic(); 
+            }
+            setLoading(true)
+            const passphrase = await bip39.generateMnemonic();
             console.log('passphrase', passphrase);
             //const wallet = bip39.mnemonicToEntropy(passphrase);
-            var seed = await bip39.mnemonicToSeedHex(passphrase)         
+            var seed = await bip39.mnemonicToSeedHex(passphrase)
             var salt = makeSalt(64);
-            const publickey = getPublicKey(seed);                   
-            let phone = phonenumber? phonenumber : RNSimData.getTelephoneNumber() //'+31-6-233787929'  // get phone number;
-            //phone = '+31-6-233787910';
+            const publickey = getPublicKey(seed);
+            console.log(JSON.stringify(data));
+            let devicePhoneNumber
+            DeviceInfo.getPhoneNumber().then((phoneNumber) => {
+                devicePhoneNumber = phoneNumber
+            });
+            let phone = phonenumber ? phonenumber : devicePhoneNumber;//RNSimData.getTelephoneNumber()
+
             const qrcode = {
-                publickey:  publickey,
-                salt: salt
+                publickey: publickey,
+                salt: salt,
+                phone:phone,
             }
             const qrcode_string = JSON.stringify(qrcode);
+            console.log("qrcode_string-----", qrcode_string)
             const data = {
                 id: phone,
                 pin: pin,
                 wallet: seed,
                 publickey: publickey,
                 salt: salt,
-                qrcode_string
-            }            
-            console.log('phone, publickey, salt', phone, publickey, salt);
-            API.oracleGetAirdrop(phone, publickey, salt, function (error, response){                    
-                console.log('-------  oracleGetAirdrop ------------');                    
-                console.log(error, response);
-                if (error == null){
+                qrcode_string:qrcode_string,
+                contract: "",
+                circle: "",
+                newUTXO: ""
+            }
+            API.oracleGetAirdrop(phone, publickey, salt, function (error, response) {
+                setLoading(false)
+                console.log('-------  oracleGetAirdrop ------------');
+                console.log("response----", response);
+                console.log("data-----1", data)
+                if (error == null) {
                     data.contract = response.contract
-                    data.Circle = response.Circle                    
+                    data.circle = response.Circle
                     data.newUTXO = response.addressOfUTXO
                     //data.satoshi = response.satoshiAliceLeft
                     var encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), pin).toString();
-                    UpdateDeviceStore(encrypted, function(err, data){
-                        console.log(err, data);
-                        Cache.data = data;                                 
+                    console.log("data-----2", data)
+                    Cache.data = data;
+                    UpdateDeviceStore(encrypted, function (err, data) {
+                        console.log("UpdateDeviceStore-----",err, data);
                         Actions.Nav({ pin: pin });
-                    })                    
+                    })
                 } else {
                     alert(`oracleGetAirdrop error: ${error.error}`)
                 }
             })
         } else {
-            ReadDeviceStore(function(err, data){
+            setLoading(true)
+            ReadDeviceStore(function (err, data) {
                 console.log(err, data);
-                if (err == null){
-                    var decrypted = CryptoJS.AES.decrypt(data, pin).toString(CryptoJS.enc.Utf8);                    
-                    decrypted_json = JSON.parse(decrypted);       
+                setLoading(false)
+                if (err == null) {
+                    var decrypted = CryptoJS.AES.decrypt(data, pin).toString(CryptoJS.enc.Utf8);
+                    decrypted_json = JSON.parse(decrypted);
                     Cache.data = decrypted_json;
-                    console.log(decrypted_json);                    
-                    Actions.Nav({ pin: pin });                              
+                    console.log(decrypted_json);
+                    Actions.Nav({ pin: pin });
                 } else {
                     alert('Incorrect pin! Please sign up first!');
                     return;
-                }                
+                }
             })
-        }               
+        }
         // const s = bitcore.HDPrivateKey.fromSeed(seed, "regtest");
         // console.log(s);
         // const d = s.derive("m/0'/0/0");
@@ -145,12 +163,13 @@ const GenerateWallet = (props) => {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
         >
-            <Image source={option === 'create' ? images.userKey: images.group} style={[styles.group, option === 'create' && { width: screenWidth/1.96}]} />
-            
+            {loading && <CLoading />}
+            <Image source={option === 'create' ? images.userKey : images.group} style={[styles.group, option === 'create' && { width: screenWidth / 1.96 }]} />
+
             <View style={styles.btnGroup}>
                 <TextInput style={styles.textInput} value={pin} onChangeText={text => setPin(text)} secureTextEntry={true} placeholder="ENTER PIN" keyboardType='numeric' />
                 {option === 'create' && <TextInput style={styles.textInput} value={confirm_pin} onChangeText={text => setConfirmPin(text)} secureTextEntry={true} placeholder="CONFIRM PIN" keyboardType='numeric' />}
-                
+
                 <TouchableOpacity onPress={() => clickNext()} style={styles.button}>
                     <Text style={styles.title}>{option === 'create' ? 'Generate' : 'Login'}</Text>
                 </TouchableOpacity>
@@ -257,13 +276,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     group: {
-        width: screenWidth/2.2,
-        height: screenWidth/1.76,
+        width: screenWidth / 2.2,
+        height: screenWidth / 1.76,
         marginTop: 30,
     },
     btnGroup: {
         width: '100%',
         alignItems: 'center',
-        height: screenWidth/1.7, 
+        height: screenWidth / 1.7,
     }
 })

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { Actions } from 'react-native-router-flux';
 import LinearGradient from 'react-native-linear-gradient'
 import images from '../config/images';
+import { PermissionsAndroid } from 'react-native';
+// import RNSimData from 'react-native-sim-data'
+import { ReadDeviceStore } from '../libs/utils'
 
 AntDesign.loadFont()
 const myCenterImage = require('../../assets/first.png');
@@ -12,11 +14,61 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window")
 var extHeight = (screenHeight - 650) / 15
 
 const SignInUp = () => {
+
+    const [createButtonVisible, setCreateButtonVisible] = useState(false);
+
+    useEffect(() => {
+
+        ReadDeviceStore(function (err, data) {
+            console.log("ReadDeviceStore-----", err, data);
+            if (err != null) {
+                setCreateButtonVisible(true)
+            } else {
+                setCreateButtonVisible(false)
+            }
+        })
+
+        initPermission();
+    }, []);
+
+    const initPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+                
+                {
+                    'title': 'READ_PHONE_STATE Permission',
+                    'message': 'READ_PHONE_STATE needs access to your device ' +
+                        'so you can take device imei.'
+                }
+            )
+
+            PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+                {
+                    'title': 'Contacts',
+                    'message': 'This app would like to view your contacts.',
+                    'buttonPositive': 'Please accept bare mortal'
+                }
+            )
+
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+
+            } else {
+                Alert.alert("App permission denied!")
+            }
+
+        } catch (err) {
+            console.warn(err)
+        }
+    }
+
     const importWallet = () => {
         Actions.GenerateWallet({ option: 'import' });
     }
 
     const createWallet = () => {
+        console.log("createWallet-----")
         Actions.GenerateWallet({ option: 'create' });
     }
 
@@ -32,12 +84,12 @@ const SignInUp = () => {
                 <Image source={images.group} style={styles.group} />
             </View>
             <Image source={images.group} style={styles.group} />
-            <TouchableOpacity onPress={() => importWallet()} style={[styles.button, { marginTop: 40 }]}>
+            {!createButtonVisible &&<TouchableOpacity onPress={() => importWallet()} style={[styles.button, { marginTop: 40 }]}>
                 <Text style={styles.title}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => createWallet()} style={styles.button}>
+            </TouchableOpacity>}
+            {createButtonVisible && <TouchableOpacity onPress={() => createWallet()} style={styles.button}>
                 <Text style={styles.title}>Create New</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
         </LinearGradient>
     )
 }

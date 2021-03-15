@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import images from '../config/images';
 import LinearGradient from 'react-native-linear-gradient'
+import { Actions } from 'react-native-router-flux';
 
 const { width } = Dimensions.get('window');
 
@@ -17,10 +18,11 @@ const Main = () => {
             <Text style={styles.normalText}>{'If Yes, press the HELP button.'}</Text>
             <View style={styles.main}>
                 <Image source={images.button} style={styles.image} />
-                <Text style={styles.helpText}>{'HELP'}</Text>
+                <TouchableOpacity style={styles.helpTextContainer} onPress={()=>{Actions.TimeLeft({ name: "Do I" })}}>
+                    <Text style={styles.helpText}>{'HELP'}</Text>
+                </TouchableOpacity>
             </View>
-
-        </LinearGradient> 
+        </LinearGradient>
     )
 }
 
@@ -36,8 +38,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    helpText: {
+    helpTextContainer: {
         position: 'absolute',
+    },
+    helpText: {
         fontSize: 18,
         color: "white",
         textAlign: 'center',
